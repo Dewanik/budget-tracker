@@ -79,12 +79,29 @@ h1 {
 .action-buttons button:hover {
   background-color: #1976d2;
 }
+.category-list {
+  min-height: 30px;
+}
 .category {
   background-color: white;
   padding: 1rem;
   border-radius: var(--border-radius);
   margin-bottom: 1rem;
   box-shadow: var(--box-shadow);
+  cursor: grab;
+  transition: box-shadow 0.15s, border 0.15s;
+  border: 2px solid transparent;
+  user-select: none;
+  position: relative;
+}
+.category.dragging {
+  opacity: 0.75;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  border: 2px dashed var(--primary-color);
+  z-index: 10;
+}
+.category.drag-over {
+  border: 2px dashed #1976d2;
 }
 .category-header {
   display: flex;
@@ -215,7 +232,7 @@ h1 {
     <button onclick="resetAllBudgets()">Reset Budgets</button>
     <button onclick="removeAllCategories()">Remove All Categories</button>
   </div>
-  <div id="categoriesList"></div>
+  <div id="categoriesList" class="category-list"></div>
 </div>
 
 <script>
@@ -232,7 +249,10 @@ const motivationalMessages = [
   "Resist the urge! You can do this."
 ];
 
-document.addEventListener('DOMContentLoaded', loadBudgetData);
+document.addEventListener('DOMContentLoaded', () => {
+  loadBudgetData();
+  enableDragAndDrop();
+});
 
 function getBudgetData() {
   const budgetDataJSON = localStorage.getItem('budgetTrackerData');
@@ -252,6 +272,7 @@ function loadBudgetData() {
     categoriesList.appendChild(categoryElement);
     updateProgressBar(index);
   });
+  enableDragAndDrop();
 }
 
 function addCategory() {
@@ -293,10 +314,7 @@ function addTransaction(categoryIndex) {
     }
     budgetData[categoryIndex].spent += amount;
     saveBudgetData(budgetData);
-    updateProgressBar(categoryIndex);
-    updateCategorySpent(categoryIndex);
-    updateCategoryBalance(categoryIndex);
-    updateCategoryOverspent(categoryIndex);
+    loadBudgetData();
   } else {
     alert('Please enter a valid amount.');
   }
@@ -314,6 +332,8 @@ function deleteCategory(index) {
 function createCategoryElement(category, index) {
   const element = document.createElement('div');
   element.className = 'category';
+  element.draggable = true;
+  element.dataset.index = index;
   element.innerHTML = `
     <div class="category-header">
       <div class="category-title">${category.name}</div>
@@ -352,13 +372,6 @@ function updateProgressBar(index) {
   } else {
     progressBar.classList.remove('over-budget');
   }
-}
-
-function updateCategorySpent(index) {
-  const budgetData = getBudgetData();
-  const category = budgetData[index];
-  const spentElement = document.getElementById(`categorySpent-${index}`);
-  spentElement.textContent = `Spent: $${category.spent.toFixed(2)}`;
 }
 
 function updateCategoryBalance(index) {
@@ -456,6 +469,61 @@ function removeAllCategories() {
     saveBudgetData([]);
     loadBudgetData();
   }
+}
+
+// DRAG AND DROP SORTING
+function enableDragAndDrop() {
+  const container = document.getElementById('categoriesList');
+  let draggedElem = null;
+  let dragStartIndex = null;
+
+  Array.from(container.children).forEach((card, idx) => {
+    card.draggable = true;
+
+    card.ondragstart = function(e) {
+      draggedElem = card;
+      dragStartIndex = idx;
+      setTimeout(() => card.classList.add('dragging'), 0);
+      e.dataTransfer.effectAllowed = "move";
+    };
+
+    card.ondragend = function() {
+      draggedElem = null;
+      dragStartIndex = null;
+      card.classList.remove('dragging');
+      Array.from(container.children).forEach(c => c.classList.remove('drag-over'));
+    };
+
+    card.ondragover = function(e) {
+      e.preventDefault();
+      if (draggedElem && card !== draggedElem) {
+        card.classList.add('drag-over');
+      }
+    };
+
+    card.ondragleave = function() {
+      card.classList.remove('drag-over');
+    };
+
+    card.ondrop = function(e) {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      if (draggedElem && card !== draggedElem) {
+        const cards = Array.from(container.children);
+        const dropIndex = cards.indexOf(card);
+        reorderCategories(dragStartIndex, dropIndex);
+        loadBudgetData();
+      }
+    };
+  });
+}
+
+function reorderCategories(from, to) {
+  if (from === to) return;
+  const data = getBudgetData();
+  const moved = data.splice(from, 1)[0];
+  data.splice(to, 0, moved);
+  saveBudgetData(data);
 }
 </script>
 </body>
