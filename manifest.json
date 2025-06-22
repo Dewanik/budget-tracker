@@ -1,0 +1,16 @@
+{
+  "name": "Budget Tracker",
+  "short_name": "BudgetTracker",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f2f2f2",
+  "theme_color": "#4CAF50",
+  "description": "A simple budget tracker web app.",
+  "icons": [
+    {
+      "src": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4b0.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    }
+  ]
+}
