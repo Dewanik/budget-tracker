@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Budget Tracker</title>
+<link rel="manifest" href="manifest.json">
 <style>
 :root {
 --primary-color: #4CAF50;
@@ -109,6 +109,22 @@ justify-content: center;
 align-items: center;
 padding-bottom: 4px;
 }
+.download-btn {
+margin: 1rem auto;
+display: block;
+padding: 0.6rem 1.3rem;
+background-color: #2196F3;
+color: white;
+border: none;
+border-radius: var(--border-radius);
+cursor: pointer;
+font-size: 1rem;
+box-shadow: var(--box-shadow);
+transition: background 0.3s;
+}
+.download-btn:hover {
+background-color: #1976d2;
+}
 </style>
 </head>
 <body>
@@ -121,6 +137,8 @@ padding-bottom: 4px;
 <input type="number" id="categoryBudget" placeholder="Budget">
 <button onclick="addCategory()">Add Category</button>
 </div>
+
+<button class="download-btn" onclick="downloadBudgetData()">Download Budget Data</button>
 
 <div id="categoriesList"></div>
 </div>
@@ -226,8 +244,21 @@ const category = budgetData[index];
 const spentElement = document.getElementById(`categorySpent-${index}`);
 spentElement.textContent = `Spent: $${category.spent.toFixed(2)}`;
 }
+
+function downloadBudgetData() {
+const data = getBudgetData();
+const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+const a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = "budget_data.json";
+document.body.appendChild(a);
+a.click();
+setTimeout(() => {
+URL.revokeObjectURL(a.href);
+a.remove();
+}, 0);
+}
 </script>
 
 </body>
 </html>
-
