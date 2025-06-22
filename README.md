@@ -16,6 +16,13 @@ A simple, mobile-friendly, and installable budget tracker web app with the follo
 
 ## 🚀 Getting Started
 
+
+
+### 1. Open and start using 
+https://dewanik.github.io/budget-tracker/
+Visit the GitHub Pages URL and use the app directly in your browser or download as mobile app!
+
+
 ### 1. Deploy via GitHub Pages
 
 1. **Create a new repository** (or use your own).
@@ -28,11 +35,6 @@ A simple, mobile-friendly, and installable budget tracker web app with the follo
     - Select branch `main` (or `master`) and set `/ (root)` as the folder
     - Save and get your live URL (usually `https://<username>.github.io/<repo>/`)
 #or 
-
-### 2. Open and start using 
-https://dewanik.github.io/budget-tracker/
-Visit the GitHub Pages URL and use the app directly in your browser!
-
 ---
 
 ## 🧑‍💻 Usage
