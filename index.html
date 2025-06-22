@@ -125,6 +125,7 @@ h1 {
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 .add-transaction-btn {
   background-color: var(--primary-color);
@@ -162,6 +163,19 @@ h1 {
 .delete-category-btn:hover {
   background-color: #b71c1c;
 }
+.remaining-balance, .overspent, .motivation {
+  font-size: 0.96rem;
+  margin-top: 2px;
+  font-weight: 500;
+}
+.remaining-balance { color: #388e3c; }
+.overspent { color: #c62828; }
+.motivation {
+  color: #1976d2;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+  display: block;
+}
 
 /* Responsive design */
 @media (max-width: 600px) {
@@ -184,7 +198,6 @@ h1 {
   }
 }
 </style>
-<!-- jsPDF CDN for PDF export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -206,6 +219,19 @@ h1 {
 </div>
 
 <script>
+const motivationalMessages = [
+  "You're doing great! Think before you spend more.",
+  "Stay strong – every dollar saved counts!",
+  "Remember your goals. Overspending sets you back!",
+  "Pause and reflect – can this expense wait?",
+  "Success is the sum of small efforts. Keep going!",
+  "Discipline now means freedom later. Stick with it!",
+  "You're in control of your finances!",
+  "Every budget win is a step closer to your dreams!",
+  "Overspending is temporary, smart habits last forever!",
+  "Resist the urge! You can do this."
+];
+
 document.addEventListener('DOMContentLoaded', loadBudgetData);
 
 function getBudgetData() {
@@ -251,16 +277,26 @@ function addCategory() {
 }
 
 function addTransaction(categoryIndex) {
+  const budgetData = getBudgetData();
+  const category = budgetData[categoryIndex];
   const transactionAmount = prompt('Enter transaction amount:');
   if (transactionAmount === null) return;
 
   const amount = parseFloat(transactionAmount);
   if (!isNaN(amount) && amount > 0) {
-    const budgetData = getBudgetData();
+    // Check if this transaction will overspend
+    if (category.spent + amount > category.budget) {
+      const randomMsg = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+      if (!confirm(randomMsg + "\nThis will overspend your budget for this category. Continue anyway?")) {
+        return;
+      }
+    }
     budgetData[categoryIndex].spent += amount;
     saveBudgetData(budgetData);
     updateProgressBar(categoryIndex);
     updateCategorySpent(categoryIndex);
+    updateCategoryBalance(categoryIndex);
+    updateCategoryOverspent(categoryIndex);
   } else {
     alert('Please enter a valid amount.');
   }
@@ -288,10 +324,18 @@ function createCategoryElement(category, index) {
       <div class="progress-bar" id="progressBar-${index}"></div>
     </div>
     <div class="category-footer">
-      <div id="categorySpent-${index}">Spent: $${category.spent.toFixed(2)}</div>
+      <div>
+        <span id="categorySpent-${index}">Spent: $${category.spent.toFixed(2)}</span>
+        <span class="remaining-balance" id="categoryBalance-${index}"></span>
+        <span class="overspent" id="categoryOverspent-${index}"></span>
+      </div>
       <button class="add-transaction-btn" title="Add transaction" onclick="addTransaction(${index})">+</button>
     </div>
   `;
+  setTimeout(() => {
+    updateCategoryBalance(index);
+    updateCategoryOverspent(index);
+  }, 0);
   return element;
 }
 
@@ -315,6 +359,34 @@ function updateCategorySpent(index) {
   const category = budgetData[index];
   const spentElement = document.getElementById(`categorySpent-${index}`);
   spentElement.textContent = `Spent: $${category.spent.toFixed(2)}`;
+}
+
+function updateCategoryBalance(index) {
+  const budgetData = getBudgetData();
+  const category = budgetData[index];
+  const balanceElement = document.getElementById(`categoryBalance-${index}`);
+  const remaining = category.budget - category.spent;
+  if (remaining >= 0) {
+    balanceElement.textContent = ` | Remaining: $${remaining.toFixed(2)}`;
+    balanceElement.style.display = '';
+  } else {
+    balanceElement.textContent = '';
+    balanceElement.style.display = 'none';
+  }
+}
+
+function updateCategoryOverspent(index) {
+  const budgetData = getBudgetData();
+  const category = budgetData[index];
+  const overspentElement = document.getElementById(`categoryOverspent-${index}`);
+  const over = category.spent - category.budget;
+  if (over > 0) {
+    overspentElement.textContent = ` | Overspent: $${over.toFixed(2)}`;
+    overspentElement.style.display = '';
+  } else {
+    overspentElement.textContent = '';
+    overspentElement.style.display = 'none';
+  }
 }
 
 function downloadBudgetData() {
@@ -351,7 +423,15 @@ function downloadBudgetPDF() {
       doc.text(`Budget: $${cat.budget.toFixed(2)}`, 14, y);
       y += 6;
       doc.text(`Spent: $${cat.spent.toFixed(2)}`, 14, y);
-      y += 8;
+      y += 6;
+      if (cat.spent <= cat.budget) {
+        doc.text(`Remaining: $${(cat.budget - cat.spent).toFixed(2)}`, 14, y);
+        y += 6;
+      } else {
+        doc.text(`Overspent: $${(cat.spent - cat.budget).toFixed(2)}`, 14, y);
+        y += 6;
+      }
+      y += 3;
       if (y > 270 && i !== data.length - 1) {
         doc.addPage();
         y = 15;
@@ -377,7 +457,6 @@ function removeAllCategories() {
     loadBudgetData();
   }
 }
-
 </script>
 </body>
 </html>
