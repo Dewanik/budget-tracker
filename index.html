@@ -7,258 +7,377 @@
 <link rel="manifest" href="manifest.json">
 <style>
 :root {
---primary-color: #4CAF50;
---secondary-color: #f2f2f2;
---font-color: #333;
---border-radius: 8px;
---box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  --primary-color: #4CAF50;
+  --secondary-color: #f2f2f2;
+  --font-color: #333;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 body {
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-background-color: var(--secondary-color);
-margin: 0;
-padding: 1rem;
-color: var(--font-color);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  background-color: var(--secondary-color);
+  margin: 0;
+  padding: 1rem;
+  color: var(--font-color);
 }
 .container {
-max-width: 600px;
-margin: 0 auto;
+  max-width: 600px;
+  margin: 0 auto;
 }
 h1 {
-text-align: center;
-color: var(--primary-color);
+  text-align: center;
+  color: var(--primary-color);
+  font-size: 2rem;
 }
 .add-category-form {
-display: flex;
-gap: 0.5rem;
-margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.add-category-form input, .add-category-form button {
+  font-size: 1rem;
 }
 .add-category-form input {
-flex-grow: 1;
-padding: 0.8rem;
-border: 1px solid #ccc;
-border-radius: var(--border-radius);
-font-size: 1rem;
+  flex-grow: 1;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  min-width: 100px;
 }
 .add-category-form button {
-padding: 0.8rem 1rem;
-background-color: var(--primary-color);
-color: white;
-border: none;
-border-radius: var(--border-radius);
-cursor: pointer;
-font-size: 1rem;
-transition: background-color 0.3s;
+  padding: 0.8rem 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s;
+  min-width: 110px;
 }
 .add-category-form button:hover {
-background-color: #45a049;
+  background-color: #45a049;
+}
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.3rem;
+  justify-content: center;
+}
+.action-buttons button {
+  padding: 0.6rem 1.3rem;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: var(--box-shadow);
+  transition: background 0.3s;
+}
+.action-buttons button:hover {
+  background-color: #1976d2;
 }
 .category {
-background-color: white;
-padding: 1rem;
-border-radius: var(--border-radius);
-margin-bottom: 1rem;
-box-shadow: var(--box-shadow);
+  background-color: white;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+  box-shadow: var(--box-shadow);
 }
 .category-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 .category-title {
-font-weight: bold;
-font-size: 1.1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  word-break: break-word;
 }
 .category-budget {
-font-size: 0.9rem;
-color: #666;
+  font-size: 0.9rem;
+  color: #666;
 }
 .progress-bar-container {
-width: 100%;
-background-color: #e0e0e0;
-border-radius: var(--border-radius);
-margin-bottom: 0.5rem;
+  width: 100%;
+  background-color: #e0e0e0;
+  border-radius: var(--border-radius);
+  margin-bottom: 0.5rem;
+  height: 18px;
 }
 .progress-bar {
-height: 15px;
-background-color: var(--primary-color);
-width: 0%;
-border-radius: var(--border-radius);
-transition: width 0.3s ease-in-out;
+  height: 100%;
+  background-color: var(--primary-color);
+  width: 0%;
+  border-radius: var(--border-radius);
+  transition: width 0.3s ease-in-out;
 }
 .progress-bar.over-budget {
-background-color: #f44336;
+  background-color: #f44336;
 }
 .category-footer {
-display: flex;
-justify-content: space-between;
-align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
 }
 .add-transaction-btn {
-background-color: var(--primary-color);
-color: white;
-border: none;
-border-radius: 50%;
-width: 30px;
-height: 30px;
-font-size: 1.5rem;
-cursor: pointer;
-display: flex;
-justify-content: center;
-align-items: center;
-padding-bottom: 4px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.7rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 4px;
+  transition: background 0.3s;
 }
-.download-btn {
-margin: 1rem auto;
-display: block;
-padding: 0.6rem 1.3rem;
-background-color: #2196F3;
-color: white;
-border: none;
-border-radius: var(--border-radius);
-cursor: pointer;
-font-size: 1rem;
-box-shadow: var(--box-shadow);
-transition: background 0.3s;
+.add-transaction-btn:hover {
+  background-color: #388e3c;
 }
-.download-btn:hover {
-background-color: #1976d2;
+.delete-category-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+}
+.delete-category-btn:hover {
+  background-color: #b71c1c;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .container {
+    padding: 0.5rem;
+    max-width: 100%;
+  }
+  .add-category-form, .action-buttons {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .add-category-form input, .add-category-form button, .action-buttons button {
+    width: 100%;
+    min-width: unset;
+  }
+  .category-header, .category-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
 }
 </style>
+<!-- jsPDF CDN for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
 <div class="container">
-<h1>My Budget Tracker</h1>
-
-<div class="add-category-form">
-<input type="text" id="categoryName" placeholder="Category Name">
-<input type="number" id="categoryBudget" placeholder="Budget">
-<button onclick="addCategory()">Add Category</button>
-</div>
-
-<button class="download-btn" onclick="downloadBudgetData()">Download Budget Data</button>
-
-<div id="categoriesList"></div>
+  <h1>My Budget Tracker</h1>
+  <div class="add-category-form">
+    <input type="text" id="categoryName" placeholder="Category Name" autocomplete="off">
+    <input type="number" id="categoryBudget" placeholder="Budget" min="0" inputmode="decimal">
+    <button onclick="addCategory()">Add Category</button>
+  </div>
+  <div class="action-buttons">
+    <button onclick="downloadBudgetData()">Download JSON</button>
+    <button onclick="downloadBudgetPDF()">Download PDF</button>
+    <button onclick="resetAllBudgets()">Reset Budgets</button>
+    <button onclick="removeAllCategories()">Remove All Categories</button>
+  </div>
+  <div id="categoriesList"></div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', loadBudgetData);
 
 function getBudgetData() {
-const budgetDataJSON = localStorage.getItem('budgetTrackerData');
-return budgetDataJSON ? JSON.parse(budgetDataJSON) : [];
+  const budgetDataJSON = localStorage.getItem('budgetTrackerData');
+  return budgetDataJSON ? JSON.parse(budgetDataJSON) : [];
 }
 
 function saveBudgetData(data) {
-localStorage.setItem('budgetTrackerData', JSON.stringify(data));
+  localStorage.setItem('budgetTrackerData', JSON.stringify(data));
 }
 
 function loadBudgetData() {
-const budgetData = getBudgetData();
-const categoriesList = document.getElementById('categoriesList');
-categoriesList.innerHTML = '';
-budgetData.forEach((category, index) => {
-const categoryElement = createCategoryElement(category, index);
-categoriesList.appendChild(categoryElement);
-updateProgressBar(index);
-});
+  const budgetData = getBudgetData();
+  const categoriesList = document.getElementById('categoriesList');
+  categoriesList.innerHTML = '';
+  budgetData.forEach((category, index) => {
+    const categoryElement = createCategoryElement(category, index);
+    categoriesList.appendChild(categoryElement);
+    updateProgressBar(index);
+  });
 }
 
 function addCategory() {
-const categoryNameInput = document.getElementById('categoryName');
-const categoryBudgetInput = document.getElementById('categoryBudget');
-const categoryName = categoryNameInput.value.trim();
-const categoryBudget = parseFloat(categoryBudgetInput.value);
+  const categoryNameInput = document.getElementById('categoryName');
+  const categoryBudgetInput = document.getElementById('categoryBudget');
+  const categoryName = categoryNameInput.value.trim();
+  const categoryBudget = parseFloat(categoryBudgetInput.value);
 
-if (categoryName && !isNaN(categoryBudget) && categoryBudget > 0) {
-const budgetData = getBudgetData();
-budgetData.push({
-name: categoryName,
-budget: categoryBudget,
-spent: 0
-});
-saveBudgetData(budgetData);
-loadBudgetData();
-categoryNameInput.value = '';
-categoryBudgetInput.value = '';
-} else {
-alert('Please enter a valid category name and budget.');
-}
+  if (categoryName && !isNaN(categoryBudget) && categoryBudget > 0) {
+    const budgetData = getBudgetData();
+    budgetData.push({
+      name: categoryName,
+      budget: categoryBudget,
+      spent: 0
+    });
+    saveBudgetData(budgetData);
+    loadBudgetData();
+    categoryNameInput.value = '';
+    categoryBudgetInput.value = '';
+  } else {
+    alert('Please enter a valid category name and budget.');
+  }
 }
 
 function addTransaction(categoryIndex) {
-const transactionAmount = prompt('Enter transaction amount:');
-if (transactionAmount === null) return;
+  const transactionAmount = prompt('Enter transaction amount:');
+  if (transactionAmount === null) return;
 
-const amount = parseFloat(transactionAmount);
-if (!isNaN(amount) && amount > 0) {
-const budgetData = getBudgetData();
-budgetData[categoryIndex].spent += amount;
-saveBudgetData(budgetData);
-updateProgressBar(categoryIndex);
-updateCategorySpent(categoryIndex);
-} else {
-alert('Please enter a valid amount.');
+  const amount = parseFloat(transactionAmount);
+  if (!isNaN(amount) && amount > 0) {
+    const budgetData = getBudgetData();
+    budgetData[categoryIndex].spent += amount;
+    saveBudgetData(budgetData);
+    updateProgressBar(categoryIndex);
+    updateCategorySpent(categoryIndex);
+  } else {
+    alert('Please enter a valid amount.');
+  }
 }
+
+function deleteCategory(index) {
+  if (confirm('Are you sure you want to delete this category?')) {
+    const budgetData = getBudgetData();
+    budgetData.splice(index, 1);
+    saveBudgetData(budgetData);
+    loadBudgetData();
+  }
 }
 
 function createCategoryElement(category, index) {
-const element = document.createElement('div');
-element.className = 'category';
-element.innerHTML = `
-<div class="category-header">
-<div class="category-title">${category.name}</div>
-<div class="category-budget" id="categoryBudget-${index}">Budget: $${category.budget.toFixed(2)}</div>
-</div>
-<div class="progress-bar-container">
-<div class="progress-bar" id="progressBar-${index}"></div>
-</div>
-<div class="category-footer">
-<div id="categorySpent-${index}">Spent: $${category.spent.toFixed(2)}</div>
-<button class="add-transaction-btn" onclick="addTransaction(${index})">+</button>
-</div>
-`;
-return element;
+  const element = document.createElement('div');
+  element.className = 'category';
+  element.innerHTML = `
+    <div class="category-header">
+      <div class="category-title">${category.name}</div>
+      <div class="category-budget" id="categoryBudget-${index}">Budget: $${category.budget.toFixed(2)}</div>
+      <button class="delete-category-btn" title="Delete category" onclick="deleteCategory(${index})">&#128465;</button>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar-${index}"></div>
+    </div>
+    <div class="category-footer">
+      <div id="categorySpent-${index}">Spent: $${category.spent.toFixed(2)}</div>
+      <button class="add-transaction-btn" title="Add transaction" onclick="addTransaction(${index})">+</button>
+    </div>
+  `;
+  return element;
 }
 
 function updateProgressBar(index) {
-const budgetData = getBudgetData();
-const category = budgetData[index];
-const progressBar = document.getElementById(`progressBar-${index}`);
-const percentage = (category.spent / category.budget) * 100;
+  const budgetData = getBudgetData();
+  const category = budgetData[index];
+  const progressBar = document.getElementById(`progressBar-${index}`);
+  const percentage = (category.spent / category.budget) * 100;
 
-progressBar.style.width = `${Math.min(percentage, 100)}%`;
+  progressBar.style.width = `${Math.min(percentage, 100)}%`;
 
-if (percentage > 100) {
-progressBar.classList.add('over-budget');
-} else {
-progressBar.classList.remove('over-budget');
-}
+  if (percentage > 100) {
+    progressBar.classList.add('over-budget');
+  } else {
+    progressBar.classList.remove('over-budget');
+  }
 }
 
 function updateCategorySpent(index) {
-const budgetData = getBudgetData();
-const category = budgetData[index];
-const spentElement = document.getElementById(`categorySpent-${index}`);
-spentElement.textContent = `Spent: $${category.spent.toFixed(2)}`;
+  const budgetData = getBudgetData();
+  const category = budgetData[index];
+  const spentElement = document.getElementById(`categorySpent-${index}`);
+  spentElement.textContent = `Spent: $${category.spent.toFixed(2)}`;
 }
 
 function downloadBudgetData() {
-const data = getBudgetData();
-const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
-const a = document.createElement('a');
-a.href = URL.createObjectURL(blob);
-a.download = "budget_data.json";
-document.body.appendChild(a);
-a.click();
-setTimeout(() => {
-URL.revokeObjectURL(a.href);
-a.remove();
-}, 0);
+  const data = getBudgetData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "budget_data.json";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(a.href);
+    a.remove();
+  }, 0);
 }
-</script>
 
+function downloadBudgetPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const data = getBudgetData();
+  let y = 15;
+
+  doc.setFontSize(18);
+  doc.text("Budget Tracker Data", 10, y);
+  y += 10;
+  doc.setFontSize(12);
+
+  if (data.length === 0) {
+    doc.text("No budget categories.", 10, y);
+  } else {
+    data.forEach((cat, i) => {
+      doc.text(`${i + 1}. ${cat.name}`, 10, y);
+      y += 8;
+      doc.text(`Budget: $${cat.budget.toFixed(2)}`, 14, y);
+      y += 6;
+      doc.text(`Spent: $${cat.spent.toFixed(2)}`, 14, y);
+      y += 8;
+      if (y > 270 && i !== data.length - 1) {
+        doc.addPage();
+        y = 15;
+      }
+    });
+  }
+
+  doc.save("budget_data.pdf");
+}
+
+function resetAllBudgets() {
+  if (confirm("Reset all budgets? This will set all spent amounts to $0.")) {
+    const budgetData = getBudgetData();
+    budgetData.forEach(cat => { cat.spent = 0; });
+    saveBudgetData(budgetData);
+    loadBudgetData();
+  }
+}
+
+function removeAllCategories() {
+  if (confirm("Remove all categories? This will delete all your budget data!")) {
+    saveBudgetData([]);
+    loadBudgetData();
+  }
+}
+
+</script>
 </body>
 </html>
