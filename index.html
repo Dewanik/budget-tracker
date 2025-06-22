@@ -194,6 +194,38 @@ h1 {
   display: block;
 }
 
+#summary {
+  font-size: 1.08rem;
+  font-weight: bold;
+  color: #333;
+  background: #e3eafc;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin: 1.2rem auto 0 auto;
+  padding: 0.7rem 1.1rem;
+  max-width: 370px;
+  text-align: left;
+  display: block;
+  letter-spacing: 0.2px;
+  border-left: 6px solid #2196F3;
+}
+#summary span {
+  display: block;
+  margin-bottom: 2px;
+}
+#summary .summary-over {
+  color: #c62828;
+  font-weight: bold;
+}
+#summary .summary-budget {
+  color: #2e7d32;
+  font-weight: bold;
+}
+#summary .summary-spent {
+  color: #1976d2;
+  font-weight: bold;
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
   .container {
@@ -212,6 +244,11 @@ h1 {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.3rem;
+  }
+  #summary {
+    font-size: 0.98rem;
+    max-width: 100%;
+    padding: 0.9rem 0.5rem;
   }
 }
 </style>
@@ -233,6 +270,7 @@ h1 {
     <button onclick="removeAllCategories()">Remove All Categories</button>
   </div>
   <div id="categoriesList" class="category-list"></div>
+  <div id="summary"></div>
 </div>
 
 <script>
@@ -265,6 +303,7 @@ function saveBudgetData(data) {
 
 function loadBudgetData() {
   const budgetData = getBudgetData();
+  updateSummary();
   const categoriesList = document.getElementById('categoriesList');
   categoriesList.innerHTML = '';
   budgetData.forEach((category, index) => {
@@ -402,6 +441,35 @@ function updateCategoryOverspent(index) {
   }
 }
 
+function getSummaryData() {
+  const data = getBudgetData();
+  let totalBudget = 0;
+  let totalSpent = 0;
+  let totalOverspent = 0;
+  data.forEach(cat => {
+    totalBudget += cat.budget || 0;
+    totalSpent += cat.spent || 0;
+    if ((cat.spent || 0) > (cat.budget || 0)) {
+      totalOverspent += (cat.spent - cat.budget);
+    }
+  });
+  return {
+    totalBudget,
+    totalSpent,
+    totalOverspent
+  };
+}
+
+function updateSummary() {
+  const { totalBudget, totalSpent, totalOverspent } = getSummaryData();
+  const summaryDiv = document.getElementById('summary');
+  summaryDiv.innerHTML = `
+    <span class="summary-budget">Total Budget: $${totalBudget.toFixed(2)}</span>
+    <span class="summary-spent">Total Spending: $${totalSpent.toFixed(2)}</span>
+    <span class="summary-over">Total Overspent: $${totalOverspent.toFixed(2)}</span>
+  `;
+}
+
 function downloadBudgetData() {
   const data = getBudgetData();
   const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
@@ -430,19 +498,24 @@ function downloadBudgetPDF() {
   if (data.length === 0) {
     doc.text("No budget categories.", 10, y);
   } else {
+    let total = 0;
+    let totalBudget = 0;
+    let totalOverspent = 0;
     data.forEach((cat, i) => {
       doc.text(`${i + 1}. ${cat.name}`, 10, y);
       y += 8;
       doc.text(`Budget: $${cat.budget.toFixed(2)}`, 14, y);
       y += 6;
       doc.text(`Spent: $${cat.spent.toFixed(2)}`, 14, y);
-      y += 6;
+      total += cat.spent;
+      totalBudget += cat.budget;
       if (cat.spent <= cat.budget) {
+        y += 6;
         doc.text(`Remaining: $${(cat.budget - cat.spent).toFixed(2)}`, 14, y);
-        y += 6;
       } else {
-        doc.text(`Overspent: $${(cat.spent - cat.budget).toFixed(2)}`, 14, y);
         y += 6;
+        doc.text(`Overspent: $${(cat.spent - cat.budget).toFixed(2)}`, 14, y);
+        totalOverspent += (cat.spent - cat.budget);
       }
       y += 3;
       if (y > 270 && i !== data.length - 1) {
@@ -450,6 +523,16 @@ function downloadBudgetPDF() {
         y = 15;
       }
     });
+    y += 7;
+    doc.setFont(undefined, 'bold');
+    doc.text(`Summary:`, 10, y);
+    y += 7;
+    doc.setFont(undefined, 'normal');
+    doc.text(`Total Budget: $${totalBudget.toFixed(2)}`, 14, y);
+    y += 6;
+    doc.text(`Total Spending: $${total.toFixed(2)}`, 14, y);
+    y += 6;
+    doc.text(`Total Overspent: $${totalOverspent.toFixed(2)}`, 14, y);
   }
 
   doc.save("budget_data.pdf");
