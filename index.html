@@ -380,19 +380,37 @@ function addCategory() {
 function addTransaction(categoryIndex) {
   const budgetData = getBudgetData();
   const category = budgetData[categoryIndex];
+  if (!category) return;
+
   const transactionAmount = prompt('Enter transaction amount:');
   if (transactionAmount === null) return;
 
   const amount = parseFloat(transactionAmount);
   if (!isNaN(amount) && amount > 0) {
+    // prompt for memo (optional)
+    let memo = prompt('Add a short memo/description for this transaction (optional):');
+    // If user pressed Cancel on memo prompt, set memo to empty string but continue
+    if (memo === null) memo = '';
+
     // Check if this transaction will overspend
-    if (category.spent + amount > category.budget) {
+    if ((category.spent || 0) + amount > (category.budget || 0)) {
       const randomMsg = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
       if (!confirm(randomMsg + "\nThis will overspend your budget for this category. Continue anyway?")) {
         return;
       }
     }
-    budgetData[categoryIndex].spent += amount;
+
+    // ensure transactions array exists
+    category.transactions = Array.isArray(category.transactions) ? category.transactions : [];
+    const transaction = {
+      amount: Number(amount),
+      memo: memo,
+      date: new Date().toISOString()
+    };
+    category.transactions.push(transaction);
+    // recompute spent
+    category.spent = category.transactions.reduce((s, t) => s + (Number(t.amount) || 0), 0);
+
     saveBudgetData(budgetData);
     loadBudgetData();
   } else {
@@ -408,7 +426,7 @@ function deleteCategory(index) {
     loadBudgetData();
   }
 }
-
+i
 function moveCategory(index, direction) {
   const data = getBudgetData();
   if (
@@ -674,6 +692,107 @@ function reorderCategories(from, to) {
 window.moveCategory = moveCategory;
 window.deleteCategory = deleteCategory;
 window.addTransaction = addTransaction;
+</script>
+<style>
+.category-select {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid #ccc;
+}
+
+.transactions-list {
+  display: none;
+  margin-top: 10px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-date {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.transaction-amount {
+  font-weight: bold;
+}
+
+.transaction-memo {
+  color: #444;
+  font-style: italic;
+}
+</style>
+
+<script>
+function createTransactionsList() {
+  const categoriesList = document.getElementById('categoriesList');
+  const select = document.createElement('select');
+  select.className = 'category-select';
+  select.innerHTML = '<option value="">Select a category to view transactions</option>';
+  
+  const transactionsList = document.createElement('div');
+  transactionsList.className = 'transactions-list';
+  
+  const updateTransactionsList = () => {
+    const budgetData = getBudgetData();
+    const selectedIndex = select.value;
+    if (selectedIndex === '') {
+      transactionsList.style.display = 'none';
+      return;
+    }
+
+    const category = budgetData[selectedIndex];
+    if (!category.transactions || category.transactions.length === 0) {
+      transactionsList.innerHTML = '<p>No transactions found for this category.</p>';
+    } else {
+      const transactionsHTML = category.transactions
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .map(t => `
+          <div class="transaction-item">
+            <div>
+              <span class="transaction-date">${new Date(t.date).toLocaleDateString()}</span>
+              ${t.memo ? `<span class="transaction-memo"> - ${t.memo}</span>` : ''}
+            </div>
+            <span class="transaction-amount">$${t.amount.toFixed(2)}</span>
+          </div>
+        `).join('');
+      transactionsList.innerHTML = transactionsHTML;
+    }
+    transactionsList.style.display = 'block';
+  };
+
+  const budgetData = getBudgetData();
+  budgetData.forEach((category, index) => {
+    select.innerHTML += `<option value="${index}">${category.name}</option>`;
+  });
+
+  select.addEventListener('change', updateTransactionsList);
+
+  categoriesList.parentNode.insertBefore(select, categoriesList);
+  categoriesList.parentNode.insertBefore(transactionsList, categoriesList);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  createTransactionsList();
+  // Refresh transactions list whenever budget data changes
+  window.addEventListener('storage', createTransactionsList);
+});
 </script>
 </body>
 </html>

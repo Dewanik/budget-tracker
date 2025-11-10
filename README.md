@@ -16,14 +16,11 @@ A simple, mobile-friendly, and installable budget tracker web app with the follo
 
 ## 🚀 Getting Started
 
-
-
 ### 1. Open and start using 
 https://dewanik.github.io/budget-tracker/
 Visit the GitHub Pages URL and use the app directly in your browser or download as mobile app!
 
-
-### 1. Deploy via GitHub Pages
+### 2. Deploy via GitHub Pages
 
 1. **Create a new repository** (or use your own).
 2. **Upload the files:**
@@ -34,7 +31,7 @@ Visit the GitHub Pages URL and use the app directly in your browser or download 
     - Go to repository **Settings** > **Pages**
     - Select branch `main` (or `master`) and set `/ (root)` as the folder
     - Save and get your live URL (usually `https://<username>.github.io/<repo>/`)
-#or 
+
 ---
 
 ## 🧑‍💻 Usage
@@ -46,6 +43,15 @@ Visit the GitHub Pages URL and use the app directly in your browser or download 
 ### Add Transaction
 
 - Click the "+" button on any category to add a transaction.
+- **Transaction Data:** Each transaction includes:
+  - **Date:** When the transaction occurred.
+  - **Amount:** The amount spent or received.
+  - **Description:** A brief note about the transaction.
+
+### View Transactions
+
+- Click on a category to view all associated transactions.
+- Transactions are expandable for detailed viewing.
 
 ### Delete Category
 
